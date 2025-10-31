@@ -27,9 +27,24 @@ struct MinHeap {
     }
 
     int pop(int weightArr[]) {
-        // TODO: remove and return smallest index
-        // Replace root with last element, then call downheap()
-        return -1; // placeholder
+        // check if empty
+        if (size == 0) {
+        cerr << "Heap underflow: cannot pop from empty heap\n";
+        return -1; // nothing to remove
+    }
+        // save the root
+        int minIdx = data[0];
+
+        // Move last element to roots position
+        size--;
+        data[0] = data[size];
+
+        //fix order, compare it with children below . 
+        if (size> 0){
+            downheap(0,weightArr);
+        }
+
+        return minIdx; // placeholder
     }
 
     void upheap(int pos, int weightArr[]) {
@@ -40,8 +55,7 @@ struct MinHeap {
             int parentIdx = data[parent]; // node index stored at parent
             // tie favors smaller index
             bool childIsSmaller =
-                (weightArr[childIdx] < weightArr[parentIdx]) ||
-                    (weightArr[childIdx] == weightArr[parentIdx] && childIdx < parentIdx);
+                (weightArr[childIdx] < weightArr[parentIdx]);
             if (!childIsSmaller) {
                  break;
             }
@@ -55,8 +69,36 @@ struct MinHeap {
     }
 
     void downheap(int pos, int weightArr[]) {
-        // TODO: swap parent downward while larger than any child
+        while(true){
+            int left = 2 * pos + 1;
+            int right = 2 * pos + 2;
+            int smallest = pos;
+        
+        //check if left exists then sees if it's smaller
+            if (left<size){
+                int li = data[left], si = data[smallest];
+            if (weightArr[li]<weightArr[si]){
+                smallest = left;
+            }
+        }
+        //check if right exists then sees if it's smaller
+            if (right < size){
+                int ri = data[right], si = data[smallest];
+            if (weightArr[ri] < weightArr[si]){
+                smallest = right;
+            }
+        }
+        //if we already have smallest we donzo
+            if (smallest == pos) break;
+
+        // if not we swap and the code keeps looping till we have smallest = pos
+            std::swap(data[pos], data[smallest]);
+        
+            pos = smallest; // moves position down so it can compare it with the next two children
     }
+}
+        
+        
 };
 
 #endif
