@@ -18,7 +18,44 @@ char charArr[MAX_NODES];
 // Function prototypes
 void buildFrequencyTable(int freq[], const string& filename);
 int createLeafNodes(int freq[]);
-int buildEncodingTree(int nextFree);
+int buildEncodingTree(int nextFree){
+     MinHeap heap;
+        
+        //push all
+
+        for (int i = 0; i < nextFree; ++i) {
+            heap.push(i,weightArr);
+        }
+
+        //if too small return the root
+        if (heap.size == 0){
+            return -1;
+        }
+        if (heap.size == 1) {
+            return heap.pop(weightArr);
+        }
+
+        // keep combining two smallest nodes until only one root remains
+        while(heap.size > 1 ){
+            
+            int a = heap.pop(weightArr);
+            int b = heap.pop(weightArr);
+
+            charArr[nextFree] = '\0';
+            leftArr[nextFree] = a;
+            rightArr[nextFree]  = b;
+            weightArr[nextFree] = weightArr [a] + weightArr[b];
+
+            //push parent back into heap
+
+            heap.push(nextFree, weightArr);
+            ++nextFree;
+
+        }
+        // final remaining is root of encoding tree
+        return heap.pop(weightArr); 
+
+}
 void generateCodes(int root, string codes[]);
 void encodeMessage(const string& filename, string codes[]);
 
