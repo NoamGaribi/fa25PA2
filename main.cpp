@@ -18,44 +18,7 @@ char charArr[MAX_NODES];
 // Function prototypes
 void buildFrequencyTable(int freq[], const string& filename);
 int createLeafNodes(int freq[]);
-int buildEncodingTree(int nextFree){
-     MinHeap heap;
-        
-        //push all
-
-        for (int i = 0; i < nextFree; ++i) {
-            heap.push(i,weightArr);
-        }
-
-        //if too small return the root
-        if (heap.size == 0){
-            return -1;
-        }
-        if (heap.size == 1) {
-            return heap.pop(weightArr);
-        }
-
-        // keep combining two smallest nodes until only one root remains
-        while(heap.size > 1 ){
-            
-            int a = heap.pop(weightArr);
-            int b = heap.pop(weightArr);
-
-            charArr[nextFree] = '\0';
-            leftArr[nextFree] = a;
-            rightArr[nextFree]  = b;
-            weightArr[nextFree] = weightArr [a] + weightArr[b];
-
-            //push parent back into heap
-
-            heap.push(nextFree, weightArr);
-            ++nextFree;
-
-        }
-        // final remaining is root of encoding tree
-        return heap.pop(weightArr); 
-
-}
+int buildEncodingTree(int nextFree);
 void generateCodes(int root, string codes[]);
 void encodeMessage(const string& filename, string codes[]);
 
@@ -126,21 +89,55 @@ int createLeafNodes(int freq[]) {
 
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
-    // TODO:
-    // 1. Create a MinHeap object.
-    // 2. Push all leaf node indices into the heap.
-    // 3. While the heap size is greater than 1:
-    //    - Pop two smallest nodes
-    //    - Create a new parent node with combined weight
-    //    - Set left/right pointers
-    //    - Push new parent index back into the heap
-    // 4. Return the index of the last remaining node (root)
-    return -1; // placeholder
-}
 
+     MinHeap heap;
+        
+        //push all
+
+        for (int i = 0; i < nextFree; ++i) {
+            heap.push(i,weightArr);
+        }
+
+        //if too small return the root
+        if (heap.size == 0){
+            return -1;
+        }
+        if (heap.size == 1) {
+            return heap.pop(weightArr);
+        }
+
+        // keep combining two smallest nodes until only one root remains
+        while(heap.size > 1 ){
+            
+            int a = heap.pop(weightArr);
+            int b = heap.pop(weightArr);
+
+            charArr[nextFree] = '\0';
+            leftArr[nextFree] = a;
+            rightArr[nextFree]  = b;
+            weightArr[nextFree] = weightArr [a] + weightArr[b];
+
+            //push parent back into heap
+
+            heap.push(nextFree, weightArr);
+            ++nextFree;
+
+        }
+        // final remaining is root of encoding tree
+        return heap.pop(weightArr); 
+
+}
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
     // TODO:
+
+    if (root <0){
+        return;
+    }
+    stack<int> nodes;
+    stack<string> paths;
+
+
     // Use stack<pair<int, string>> to simulate DFS traversal.
     // Left edge adds '0', right edge adds '1'.
     // Record code when a leaf node is reached.
