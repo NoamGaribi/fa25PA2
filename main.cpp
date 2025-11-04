@@ -92,7 +92,7 @@ int buildEncodingTree(int nextFree) {
 
      MinHeap heap;
         
-        //push all
+        //push all, we start with our minheap before doing huffman
 
         for (int i = 0; i < nextFree; ++i) {
             heap.push(i,weightArr);
@@ -129,18 +129,47 @@ int buildEncodingTree(int nextFree) {
 }
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
-    // TODO:
+    //clear previous codes
+    for (int i = 0; i<26; ++i){
+        codes [i].clear();
+    }
 
+    
+    // if no tree, nothing
     if (root <0){
         return;
     }
-    stack<int> nodes;
-    stack<string> paths;
+    //DFS stack 
+    stack<int> nodes; // which node to visit next
+    stack<string> paths; //store bitstring
 
+    //start at root with empty path
+    nodes.push(root);   
+    paths.push(""); 
 
-    // Use stack<pair<int, string>> to simulate DFS traversal.
-    // Left edge adds '0', right edge adds '1'.
-    // Record code when a leaf node is reached.
+    //DFS loop
+    while (!nodes.empty()) {
+        int u = nodes.top();
+        nodes.pop();
+        string path = paths.top(); paths.pop();
+        
+        //get left and right indices of this node
+        int L = leftArr[u];
+        int R = rightArr[u]; 
+        
+        bool isLeaf = (L == -1 && R == -1);
+        if (isLeaf) {
+            char c = charArr[u]; 
+            if (c>= 'a' && c <='z') {  // only assign code for letters
+                // in case our file is only one letter we create this edge case
+                codes [ c-'a'] = path.empty() ? "0": path;
+            }
+        }else {
+            //push right first then left, so left gets proccess first, LIFO
+            if (R != -1) { nodes.push(R); paths.push(path + "1");}
+            if (L != -1) {nodes.push(L); paths.push(path + "0");}
+        }
+    }
 }
 
 // Step 5: Print table and encoded message
